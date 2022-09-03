@@ -1,11 +1,13 @@
 package routes
 
+// 参考文档: https://www.liwenzhou.com/posts/Go/jwt_in_gin/
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"go_web/mysql_db"
+	"go_web/pkg"
 	"net/http"
 )
-import "go_web/mysql_db"
 
 type ResponseData struct {
 	Code int64
@@ -45,10 +47,15 @@ func Login(c *gin.Context) {
 	UserRecord, err := mysql_db.Db.Exec("SELECT password FROM user WHERE username=? LIMIT 1", Params.Username)
 	fmt.Println(UserRecord, err)
 
+	access_token, _ := pkg.GenToken(Params.Username)
+	token, err := pkg.ParseToken(access_token)
+
+	fmt.Println("token", token)
+
 	ResponseSuccess(c,gin.H{
 		"user_id": 1, //js识别的最大值：id值大于1<<53-1  int64: i<<63-1
-		"user_name": "hzf",
-		"access_token": "user.AccessToke",
+		"user_name": Params.Username,
+		"access_token": access_token,
 		"refresh_token": "user.RefreshToken",
 	})
 }
