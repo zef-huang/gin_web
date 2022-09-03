@@ -33,7 +33,7 @@ func SignUp(c *gin.Context) {
 	var Params UserInfo
 	c.ShouldBindJSON(&Params)
 	// 写入数据库
-	_, err := mysql_db.Db.Exec("INSERT INTO user(username,password)VALUES (?,?)","hzf","123456")
+	_, err := mysql_db.Db.Exec("INSERT INTO user(username,password)VALUES (?,?)",Params.Username,Params.Password)
 	fmt.Println(err)
 	ResponseSuccess(c, nil)
 }
